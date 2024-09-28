@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jedi Translator</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: Arial, sans-serif;
+        }
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #000;
+            background-image: url('/images.png?height=1080&width=1920');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+        .container {
+            width: 100%;
+            max-width: 400px;
+            padding: 2rem;
+            border-radius: 0.5rem;
+            backdrop-filter: blur(8px);
+            background-color: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(0, 255, 0, 0.2);
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.2);
+        }
+        h1 {
+            font-size: 2rem;
+            text-align: center;
+            color: #4eff4e;
+            margin-bottom: 1.5rem;
+            animation: pulse 2s infinite;
+        }
+        input, button {
+            width: 100%;
+            padding: 0.75rem;
+            margin-bottom: 1rem;
+            border-radius: 0.25rem;
+            border: 1px solid rgba(0, 255, 0, 0.5);
+            background-color: rgba(0, 0, 0, 0.5);
+            color: #4eff4e;
+            font-size: 1rem;
+        }
+        input::placeholder {
+            color: #1a7a1a;
+        }
+        input:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(0, 255, 0, 0.5);
+        }
+        button {
+            background-color: #008000;
+            color: #000;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        button:hover {
+            background-color: #006400;
+            transform: scale(1.05);
+        }
+        #translation {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background-color: rgba(0, 0, 0, 0.4);
+            border-radius: 0.25rem;
+            border: 1px solid rgba(0, 255, 0, 0.3);
+            display: none;
+        }
+        #translation h3 {
+            font-size: 1.25rem;
+            color: #4eff4e;
+            margin-bottom: 0.5rem;
+        }
+        #translation p {
+            color: #4eff4e;
+        }
+        .lightsabers {
+            display: flex;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+        .lightsaber {
+            width: 4px;
+            height: 64px;
+            margin: 0 8px;
+            border-radius: 2px;
+            animation: pulse 2s infinite;
+        }
+        .lightsaber:nth-child(1) { background-color: #4eff4e; box-shadow: 0 0 10px #4eff4e; }
+        .lightsaber:nth-child(2) { background-color: #4e4eff; box-shadow: 0 0 10px #4e4eff; }
+        .lightsaber:nth-child(3) { background-color: #ff4e4e; box-shadow: 0 0 10px #ff4e4e; }
+        @keyframes pulse {
+            0% { opacity: 0.6; }
+            50% { opacity: 1; }
+            100% { opacity: 0.6; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Yoda Translator</h1>
+        <input type="text" id="input" placeholder="Enter your message">
+        <button id="translate">Translate</button>
+        <div id="translation">
+            <h3>Translation:</h3>
+            <p id="translatedText"></p>
+        </div>
+        <div class="lightsabers">
+            <div class="lightsaber"></div>
+            <div class="lightsaber"></div>
+            <div class="lightsaber"></div>
+        </div>
+    </div>
+
+    <script>
+        const translationDiv = document.getElementById("translation");
+        const translatedText = document.getElementById("translatedText");
+        const button = document.getElementById("translate");
+        const input = document.getElementById("input");
+        
+        button.addEventListener("click", () => {
+          const inputFromUser = input.value;
+        
+          if (!inputFromUser) {
+            translatedText.textContent = 'Please enter text to translate.';
+            translationDiv.style.display = 'block';
+            return;
+          }
+        
+          const endpoint = 'https://api.funtranslations.com/translate/yoda.json?text=' + encodeURIComponent(inputFromUser);
+        
+          fetch(endpoint)
+            .then(response => {
+              if (!response.ok) {
+                throw new Error('Network response was not ok');
+              }
+              return response.json();
+            })
+            .then(data => {
+              const yodaTranslation = data.contents.translated;
+              translatedText.textContent = yodaTranslation;
+              translationDiv.style.display = 'block';
+            })
+            .catch(error => {
+              console.error('Error fetching translation:', error);
+              translatedText.textContent = 'Failed to fetch translation. The Force is not strong with this one.';
+              translationDiv.style.display = 'block';
+            });
+        });
+    </script>
+</body>
+</html>
